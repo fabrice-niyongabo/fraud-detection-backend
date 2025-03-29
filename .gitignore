@@ -1,1 +1,23 @@
+.idea/
+.vscode/
+.venv*/
+venv*/
+
+*.pyc
+__pycache__/
+instance/ 
+.mypy_cache/
+.pytest_cache/
+.coverage
+
+*.env
+# *.env.*
+.env.dev
+.env.prod
+node_modules
+
+/*/uploads/*
+!/*/uploads/empty.txt
+
+app.log
 .qodo

@@ -8,6 +8,7 @@ import joblib
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.preprocessing import LabelEncoder
 import time
+import shutil
 
 # Configuration
 DATA_PATH = "dataset/data.csv"
@@ -117,7 +118,15 @@ def main():
     
     # Save H2O model
     model_path = h2o.save_model(best_model, path=MODEL_DIR)
-    print(f"  Saved H2O model to {model_path}")
+    
+    # Rename the model folder
+    custom_model_name = "sms_threat_detection_model"
+    custom_model_path = os.path.join(os.path.dirname(model_path), custom_model_name)
+
+    # Use shutil to rename the folder
+    shutil.move(model_path, custom_model_path)
+    # print(f"  Saved H2O model to {model_path}")
+    print(f"  Saved H2O model to {custom_model_path}")
     
     print("\nModel training and saving complete!")
     print(f"All model components saved to '{MODEL_DIR}' directory")

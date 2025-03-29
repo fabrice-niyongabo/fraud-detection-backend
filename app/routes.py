@@ -3,7 +3,12 @@ from http import HTTPStatus
 import logging
 from app.utils import auth
 from app.services import userService
-import json
+from app.utils import prediction
+
+
+
+# Initialize model
+threat_detection_model = prediction.SMSThreatDetectionModel()
 
 def register_routes(app: Flask) -> None: 
     @app.route("/")
@@ -36,3 +41,12 @@ def register_routes(app: Flask) -> None:
             return {"message":str(e)}, HTTPStatus.BAD_REQUEST
         except Exception as e:
             return {"message":str(e)}, HTTPStatus.INTERNAL_SERVER_ERROR
+        
+    @app.route('/api/detect', methods=['POST'])
+    def detect_threat():
+        try:
+            message = request.json['message']
+            result = threat_detection_model.predict(message)
+            return {'result': result}, HTTPStatus.OK
+        except Exception as e:
+            return {'message': str(e)}, HTTPStatus.INTERNAL_SERVER_ERROR

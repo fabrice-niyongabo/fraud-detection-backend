@@ -31,10 +31,46 @@ class SMSThreatDetectionModel:
         
         return text 
     
+    # def predict(self, message): 
+    #     # Load saved components
+    #     vectorizer = joblib.load(self.vectorizer_path)
+    #     label_encoder = joblib.load(self.label_encoder_path)
+        
+    #     # Preprocess message
+    #     preprocessed_message = self.preprocess_text(message)
+        
+    #     # Vectorize message
+    #     X = vectorizer.transform([preprocessed_message])
+        
+    #     # Convert to H2O frame
+    #     h2o_frame = h2o.H2OFrame(pd.DataFrame(X.toarray()))
+        
+    #     # Load saved model
+    #     model = h2o.load_model(self.model_path)
+        
+    #     # Predict
+    #     prediction = model.predict(h2o_frame)
+
+    #     # Debugging: Print column names
+    #     print("Prediction Output Columns:", prediction.columns)
+
+    #     # Extract predicted label
+    #     predicted_label = prediction['predict'][0, 0]
+
+    #     # Dynamically find the probability column
+    #     prob_column = [col for col in prediction.columns if col.startswith('p')][0]
+    #     predicted_prob = prediction[prob_column][0, 0]  # Extract the probability
+        
+    #     # Decode label
+    #     label = label_encoder.inverse_transform([int(predicted_label)])[0]
+        
+    #     return {
+    #         'threat_probability': float(predicted_prob),
+    #         'is_threat': label == 'threat',
+    #         'label': label
+    #     }
+    
     def predict(self, message):
-        """
-        Predict if a message is a threat
-        """
         # Load saved components
         vectorizer = joblib.load(self.vectorizer_path)
         label_encoder = joblib.load(self.label_encoder_path)
@@ -53,8 +89,15 @@ class SMSThreatDetectionModel:
         
         # Predict
         prediction = model.predict(h2o_frame)
-        predicted_label = prediction['predict'][0][0]
-        predicted_prob = prediction['predict_proba'][0][1]
+
+        # Log columns to debug
+        print("Prediction Output Columns:", prediction.columns)
+
+        # Extract predicted label
+        predicted_label = prediction['predict'][0, 0]
+
+        # Get correct probability column
+        predicted_prob = prediction['p1'][0, 0]  # Use 'p1' as the probability column
         
         # Decode label
         label = label_encoder.inverse_transform([int(predicted_label)])[0]

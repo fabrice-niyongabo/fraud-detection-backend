@@ -1,0 +1,11 @@
+
+import os
+
+class Config:
+    DB_URL=os.getenv('DB_URL')
+
+    SQLALCHEMY_DATABASE_URI = DB_URL
+    # SQLALCHEMY_TRACK_MODIFICATIONS = False
+    SQLALCHEMY_TRACK_MODIFICATIONS = True 
+    
+    JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY")

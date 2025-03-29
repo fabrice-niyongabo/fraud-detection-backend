@@ -1,0 +1,11 @@
+text,label
+"Congratulations! You've won a free iPhone",threat
+"Your bank account has been suspended",threat
+"Hi, this is your bank verifying your details",threat
+"Meeting scheduled for tomorrow at 2 PM",safe
+"Urgent: Complete your KYC now to avoid account closure",threat
+"You have a package waiting for pickup",threat
+"Your transaction is confirmed",safe
+"Important: Verify your account details now",threat
+"Hello, how are you?",safe
+"Click this link to claim your prize",threat

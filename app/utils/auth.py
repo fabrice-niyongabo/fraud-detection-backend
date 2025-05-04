@@ -18,6 +18,7 @@ def token_required(f):
         try:
             data = jwt.decode(token, Config.JWT_SECRET_KEY, algorithms=["HS256"])
             current_user = {
+                "id": data['id'],
                 "email": data['email'],
                 "isActive": data.get('isActive', True)  # Default to True if not present
             }

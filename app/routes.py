@@ -70,10 +70,22 @@ def register_routes(app: Flask) -> None:
                 _id=_id,
                 date=date
             )
-            print(message, translated_message)
+            print("Message:", message)
+            print("message translated:", translated_message)
             result = threat_detection_model.predict(translated_message)
             messageService.updateMessagePrediction(msg['id'],result['threat_probability'])
             return {'message': "Message processed successfully"}, HTTPStatus.OK
         except Exception as e:
             print(e)
+            return {'message': str(e)}, HTTPStatus.INTERNAL_SERVER_ERROR
+        
+    @app.route('/api/messages/mine')
+    @auth.token_required
+    def getMyMessages(current_user):
+        try:
+            userId = current_user['id']
+            messages = messageService.getUserMessages(userId)
+            return {'messages': messages}, HTTPStatus.OK
+        except Exception as e:
+            logging.error(e)
             return {'message': str(e)}, HTTPStatus.INTERNAL_SERVER_ERROR

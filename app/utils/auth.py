@@ -13,7 +13,7 @@ def token_required(f):
         if 'Authorization' in request.headers:
             token = request.headers['Authorization'].split(" ")[1]
         if not token:
-            return jsonify({'message': 'Token is missing'}), 401
+            return jsonify({'message': 'Token is missing'}), HTTPStatus.UNAUTHORIZED
         
         try:
             data = jwt.decode(token, Config.JWT_SECRET_KEY, algorithms=["HS256"])
@@ -23,7 +23,7 @@ def token_required(f):
                 "isActive": data.get('isActive', True)  # Default to True if not present
             }
         except Exception as e:
-            return jsonify({'message': 'Token is invalid'}), 401
+            return jsonify({'message': 'Token is invalid'}), HTTPStatus.UNAUTHORIZED
 
         return f(current_user, *args, **kwargs)
     return decorated

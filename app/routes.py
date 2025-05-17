@@ -1,9 +1,8 @@
 from flask import Flask, jsonify, request   
 from http import HTTPStatus
-import logging
-from app.utils import auth
+import logging 
 from app.services import userService,messageService
-from app.utils import prediction,asyncTask
+from app.utils import auth, prediction, translation
 
 
 
@@ -60,14 +59,20 @@ def register_routes(app: Flask) -> None:
             _id = request.json['_id']
             address = request.json['address']
             userId = current_user['id']
+            
+            translated_message = translation.translate(message)
             msg = messageService.saveMessage(
                 message=message,
+                translated_message=translated_message,
                 address=address,
                 userId=userId,
                 _id=_id,
                 date=date
             )
-            asyncTask.processSMS.delay(message,msg['id'])
+            print(message, translated_message)
+            result = threat_detection_model.predict(translated_message)
+            messageService.updateMessagePrediction(msg['id'],result['threat_probability'])
             return {'message': "Message processed successfully"}, HTTPStatus.OK
         except Exception as e:
+            print(e)
             return {'message': str(e)}, HTTPStatus.INTERNAL_SERVER_ERROR

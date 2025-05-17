@@ -45,7 +45,8 @@ def register_routes(app: Flask) -> None:
     def detect_threat():
         try:
             message = request.json['message']
-            result = threat_detection_model.predict(message)
+            translated_message = translation.translate(message)
+            result = threat_detection_model.predict(translated_message)
             return {'result': result}, HTTPStatus.OK
         except Exception as e:
             return {'message': str(e)}, HTTPStatus.INTERNAL_SERVER_ERROR

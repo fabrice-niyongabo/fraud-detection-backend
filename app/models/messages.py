@@ -12,6 +12,8 @@ class Message(db.Model):
     date = db.Column(db.String(128), nullable=False)
     address = db.Column(db.String(120),nullable=False)
     message = db.Column(db.Text, nullable=True)
+    reported = db.Column(db.Boolean, default=False, nullable=True)
+    reportingComment = db.Column(db.Text, nullable=True)
     translated_message = db.Column(db.Text, nullable=True)
     prediction = db.Column(db.DECIMAL(10,2),default=0.0, nullable=True)
     userId = db.Column(db.Integer, nullable=False)
@@ -29,6 +31,8 @@ class Message(db.Model):
             "date": self.date,
             "address": self.address,
             "message": self.message,
+            "reported": self.reported,
+            "reportingComment": self.reportingComment,
             "translated_message": self.translated_message,
             "prediction": self.prediction,
             "userId": self.userId,

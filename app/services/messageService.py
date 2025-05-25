@@ -61,4 +61,36 @@ def getUserMessages(userId):
     except Exception as e: 
         raise Exception(f"{str(e)}")
     
- 
+def deleteMessage(id,userId):
+    try:
+        msg = Message.query.get(id)
+        if not msg:
+            raise ValueError("Message not found")
+        if msg.userId != userId:
+            raise ValueError("You are not authorized to delete this message")
+        
+        db.session.delete(msg)
+        db.session.commit()
+        
+        return msg.toJSON()
+    except Exception as e:
+        db.session.rollback() 
+        raise Exception(f"{str(e)}")
+    
+def handleMessageReport(id,userId,comment):
+    try:
+        if not comment:
+            raise ValueError("Comment is required")
+        
+        msg = Message.query.get(id)
+        if not msg:
+            raise ValueError("Message not found")
+        if msg.userId != userId:
+            raise ValueError("You are not authorized to report this message")
+        msg.reported = True
+        msg.reportingComment = comment
+        db.session.commit()
+        return msg.toJSON()
+    except Exception as e:
+        db.session.rollback()
+        raise Exception(f"{str(e)}")

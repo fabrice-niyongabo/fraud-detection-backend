@@ -89,3 +89,28 @@ def register_routes(app: Flask) -> None:
         except Exception as e:
             logging.error(e)
             return {'message': str(e)}, HTTPStatus.INTERNAL_SERVER_ERROR
+    
+    @app.route('/api/messages/mine', methods=['PUT'])
+    @auth.token_required
+    def reportMessage(current_user):
+        try:
+            userId = current_user['id']
+            data = request.get_json()
+            id = data.get('id')
+            comment = data.get('comment')
+            messageService.handleMessageReport(id,userId,comment)
+            return {'message': "Message has been reported!"}, HTTPStatus.OK
+        except Exception as e:
+            logging.error(e)
+            return {'message': str(e)}, HTTPStatus.INTERNAL_SERVER_ERROR
+    
+    @app.route('/api/messages/mine/<int:id>', methods=['DELETE'])
+    @auth.token_required
+    def deleteMessage(current_user,id):
+        try:
+            userId = current_user['id']
+            messageService.deleteMessage(id,userId)
+            return {'message': "Message has been deleted!"}, HTTPStatus.OK
+        except Exception as e:
+            logging.error(e)
+            return {'message': str(e)}, HTTPStatus.INTERNAL_SERVER_ERROR

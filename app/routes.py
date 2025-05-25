@@ -114,3 +114,31 @@ def register_routes(app: Flask) -> None:
         except Exception as e:
             logging.error(e)
             return {'message': str(e)}, HTTPStatus.INTERNAL_SERVER_ERROR
+        
+    @app.route('/api/profile/names', methods=['PUT'])
+    @auth.token_required
+    def updateUserNames(current_user):
+        try:
+            userId = current_user['id']
+            data = request.get_json()
+            names = data.get('names')
+            userService.updateUserNames(userId,names)
+            return {'message': "Names updated successfully"}, HTTPStatus.OK
+        except Exception as e:
+            logging.error(e)
+            return {'message': str(e)}, HTTPStatus.INTERNAL_SERVER_ERROR
+        
+    @app.route('/api/profile/password', methods=['PUT'])
+    @auth.token_required
+    def updateUserPassword(current_user):
+        try:
+            userId = current_user['id']
+            data = request.get_json()
+            newPassword = data.get('newPassword')
+            oldPassword = data.get('oldPassword')
+            userService.updatedPassword(userId,newPassword,oldPassword)
+            return {'message': "Password updated successfully"}, HTTPStatus.OK
+        except Exception as e:
+            logging.error(e)    
+            return {'message': str(e)}, HTTPStatus.INTERNAL_SERVER_ERROR
+        

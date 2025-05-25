@@ -79,3 +79,31 @@ def login(
     
     except Exception as e: 
         raise Exception(f"{str(e)}")
+    
+def updateUserNames(userId,names):
+    try:
+        user = User.query.get(userId)
+        if not user:
+            raise ValueError("User not found")
+        user.names = names
+        db.session.commit()
+        return user.toJSON()
+    except Exception as e:
+        db.session.rollback()
+        raise Exception(f"{str(e)}")
+    
+def updatedPassword(userId,newPassword,oldPassword):
+    try:
+        user = User.query.get(userId)
+        if not user:
+            raise ValueError("User not found")
+        if not bcrypt.checkpw(oldPassword.encode('utf-8'), user.password.encode('utf-8')):
+            raise ValueError("Wrong old password")
+        
+        hashedPassword = bcrypt.hashpw(newPassword.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+        user.password = hashedPassword
+        db.session.commit()
+        return user.toJSON()
+    except Exception as e:
+        db.session.rollback()
+        raise Exception(f"{str(e)}")

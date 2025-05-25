@@ -1,7 +1,7 @@
 from flask import Flask, jsonify, request   
 from http import HTTPStatus
 import logging 
-from app.services import userService,messageService
+from app.services import userService,messageService,notificationService
 from app.utils import auth, prediction, translation
 
 
@@ -74,6 +74,13 @@ def register_routes(app: Flask) -> None:
             print("message translated:", translated_message)
             result = threat_detection_model.predict(translated_message)
             messageService.updateMessagePrediction(msg['id'],result['threat_probability'])
+            
+            # Notification
+            try:
+                if result['threat_probability'] > 0.5:
+                    notificationService.send_notification_to_user(userId,"Message detected as fraudulent")
+            except Exception as e:
+                logging.exception("Error sending notification")
             return {'message': "Message processed successfully"}, HTTPStatus.OK
         except Exception as e:
             print(e)
@@ -138,6 +145,19 @@ def register_routes(app: Flask) -> None:
             oldPassword = data.get('oldPassword')
             userService.updatedPassword(userId,newPassword,oldPassword)
             return {'message': "Password updated successfully"}, HTTPStatus.OK
+        except Exception as e:
+            logging.error(e)    
+            return {'message': str(e)}, HTTPStatus.INTERNAL_SERVER_ERROR
+        
+    @app.route('/api/token', methods=['POST'])
+    @auth.token_required
+    def saveUserToken(current_user):
+        try:
+            userId = current_user['id']
+            data = request.get_json() 
+            token = data.get('token')
+            userService.saveUserToken(userId,token)
+            return {'message': "Token saved successfully"}, HTTPStatus.OK  
         except Exception as e:
             logging.error(e)    
             return {'message': str(e)}, HTTPStatus.INTERNAL_SERVER_ERROR

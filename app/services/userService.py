@@ -1,4 +1,5 @@
 from app.models.users import User
+from app.models.userTokens import UserToken
 from app.extensions import db
 import jwt
 import bcrypt
@@ -107,3 +108,28 @@ def updatedPassword(userId,newPassword,oldPassword):
     except Exception as e:
         db.session.rollback()
         raise Exception(f"{str(e)}")
+    
+def saveUserToken(userId,token):
+    try:
+        # check if token already exists
+        userToken = UserToken.query.filter_by(
+            userId=userId,
+            token=token
+        ).first()
+
+        if userToken:    
+            raise ValueError(f"Token already exists")
+        
+        userToken = UserToken(
+            userId = userId,
+            token = token
+        )
+        
+        # Add the new data to the session and commit
+        db.session.add(userToken)
+        db.session.commit()
+        
+        return userToken.toJSON()
+    except Exception as e:
+        db.session.rollback() 
+        raise Exception(f"{str(e)}")    

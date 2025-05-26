@@ -34,7 +34,7 @@ COPY . /app/
 EXPOSE 8000
 
 # Start the app (replace with your actual entry point if different)
-# CMD ["waitress-serve", "--port=8000", "app:app"]
+CMD ["waitress-serve", "--port=8000", "run:app"]
 
 # Run with Gunicorn (adjust app module as needed)
-CMD ["gunicorn", "--workers=2", "--bind=0.0.0.0:${PORT:-8000}", "app:app"]
+# CMD ["gunicorn", "--workers=2", "--bind=0.0.0.0:${PORT:-8000}", "app:app"]

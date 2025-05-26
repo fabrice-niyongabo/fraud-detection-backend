@@ -82,6 +82,9 @@ def register_routes(app: Flask) -> None:
             except Exception as e:
                 logging.exception("Error sending notification")
             return {'message': "Message processed successfully"}, HTTPStatus.OK
+        except ValueError as e:
+            print(e)
+            return {'message': str(e)}, HTTPStatus.OK
         except Exception as e:
             print(e)
             return {'message': str(e)}, HTTPStatus.INTERNAL_SERVER_ERROR

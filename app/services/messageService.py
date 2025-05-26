@@ -12,7 +12,7 @@ def saveMessage(
     try:
         # check if message already exists
         msg = Message.query.filter_by(
-            _id=_id,
+            _id=str(_id),
             userId=userId,
             address=address,
             date=date
@@ -34,8 +34,11 @@ def saveMessage(
         db.session.commit()
         
         return newMessage.toJSON()
+    except ValueError as e:
+        db.session.rollback()
+        raise ValueError(f"{str(e)}")
     except Exception as e:
-        db.session.rollback() 
+        db.session.rollback()
         raise Exception(f"{str(e)}")
 
 def updateMessagePrediction(

@@ -15,7 +15,7 @@ def saveMessage(
             _id=str(_id),
             userId=userId,
             address=address,
-            date=date
+            date=str(date)
         ).first()
         if msg:
             raise ValueError(f"Message already analyzed")
